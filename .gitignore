@@ -1,0 +1,5 @@
+/node_modules
+/.idea
+/.env
+/ssl/server.cert
+/ssl/server.key
