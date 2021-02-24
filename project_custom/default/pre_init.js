@@ -1,6 +1,4 @@
-/**
- * Created by Bezsmertnyi Ievgen on 18.02.2020.
- */
+
 
 var bot = require('./base_class')
 
