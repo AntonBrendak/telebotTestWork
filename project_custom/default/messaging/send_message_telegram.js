@@ -24,7 +24,28 @@ bot.prototype.telegramAxiosSend = async function(url, request) {
 
     return res
 }
-bot.prototype.sendMessageButtons = async function(customer_chat_id,text,buttons) {
+
+bot.prototype.sendMessageGenericButtons = async function(customer_chat_id,text,buttons) {
+    let url = 'https://api.telegram.org/bot' + process.env.TOKEN + '/sendMessage'
+
+    let reply_markup = {
+        "keyboard": buttons
+    }
+
+    let request = {
+        reply_markup: reply_markup,
+        chat_id: customer_chat_id,
+        text: text
+    }
+
+    try {
+        await this.telegramAxiosSend(url, request)
+    } catch (error) {
+        console.log('send error');
+    }
+}
+
+bot.prototype.sendMessageInlineButtons = async function(customer_chat_id,text,buttons) {
     let url = 'https://api.telegram.org/bot' + process.env.TOKEN + '/sendMessage'
 
     let reply_markup = {
