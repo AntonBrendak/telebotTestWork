@@ -8,8 +8,8 @@ var DbModels = require('./../../db/models')
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 
-
-bot.prototype.getMatches = async function() {
+// Api для запроса к внешним адрессам
+/* bot.prototype.getMatches = async function() {
     let request = {
         query: 'query getMatchesList($id: ID!, $status: MatchStatus, $game: String, $paging: PagingInput) {' 
             + 'project(id: $id, isPublic: true) {'
@@ -60,6 +60,6 @@ bot.prototype.getMatches = async function() {
         this.console_log(err, 'yellow');
     });
     return matches.slice(0,5)
-}
+}*/
 //Export
 module.exports = bot;

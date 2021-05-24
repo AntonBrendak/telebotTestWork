@@ -29,132 +29,9 @@ require('./messaging/send_message_telegram')
 
 
 
-//Переинициализация состояния
-bot.prototype.reInitState = async function() {
-    await this.deleteState()
-    await this.getStateOrCreateNew()
-}
-
-bot.prototype.getStateOrCreateNew = async function() {
-    if(this.chat_user_id){
-        let state = await this.getState()
-
-        if(!state){
-            state = await this.createState()
-        }
-
-        this.state = state.dataValues
-
-        //Проверки
-        if(this.state && this.state.json_data) {
-            this.state.json = JSON.parse(this.state.json_data)
-
-            //Предопределения
-            if(!this.state.json.user_data){
-                this.state.json.user_data = {}
-            }
-            if(!this.state.json.const){
-                this.state.json.const = {}
-            }
-
-            //Объект модулей
-            if(!this.state.json.modules){
-                this.state.json.modules = {}
-            }
-
-            if(!this.state.json.langs){
-                this.state.json.langs = []
-
-                let langs = await DbModels.KwBotLang.findAll({
-                    where: {
-                        bot_id: this.bot_id,
-                        used_in_dialog: 1
-                    },
-                    attributes: ['id', 'code'],
-                    raw: true
-                })
-
-                if(langs && langs.length > 0) {
-                    for(let lang of langs){
-                        if(lang && lang.code){
-                            this.state.json.langs.push(lang.code)
-                        }
-                    }
-                }
-            }
-
-            //Запись в стейт для лога
-            this.state.json.user_request = this.user_request
-
-            return true
-        }
-    }
-
-    return false
-};
-
-bot.prototype.deleteState = async function() {
-    await DbModels.KwBotState.destroy({
-        where: {
-            chat_user_id: this.chat_user_id,
-            bot_id: this.bot_id
-        }
-    })
-
-    return true
-};
 
 
-bot.prototype.getState = async function() {
-    let state = await DbModels.KwBotState.findOne({
-        where: {
-            chat_user_id: this.chat_user_id,
-            bot_id: this.bot_id
-        }
-    })
 
-    return state
-};
-
-bot.prototype.createState = async function() {
-
-    let lang = await DbModels.KwBotLang.findOne({
-        where: {
-            bot_id: this.bot_id,
-            default: 1
-        },
-        attributes: ['id', 'code', 'default'],
-        raw: true
-    })
-
-    let state
-
-    if(lang && lang.code) {
-         state = await DbModels.KwBotState.create({
-            'chat_user_id': this.chat_user_id,
-            lang_code: lang.code,
-            bot_id: this.bot_id,
-            'json_data': '{}',
-            status: 'wait'
-        })
-    }
-
-    return state
-};
-
-bot.prototype.saveStateToDb = async function() {
-
-    delete this.state.json.user_input
-    // delete this.state.json.node
-
-    this.state.json_data = JSON.stringify(this.state.json)
-
-    await DbModels.KwBotState.update(this.state, {
-        where: {
-            id: this.state.id
-        }
-    })
-};
 
 
 bot.prototype.getVariables = async function() {
@@ -227,6 +104,7 @@ bot.prototype.getVariables = async function() {
 
 //Callbacks
 //Обработка параметров callback`а
+// пример парсера ответа телеги
 bot.prototype.parseCallBackData = function() {
     let arr = this.user_request.callback.data.split('|')
 
@@ -238,32 +116,18 @@ bot.prototype.parseCallBackData = function() {
         value: 5,
 
     }
-
-    for(let key in obj) {
-        if (arr[obj[key]]) {
-            this.user_request.callback[key] = arr[obj[key]]
-        }
-    }
 }
 //Callbacks
 
 //Проверка статуса
-bot.prototype.checkIfStatusBusy = async function() {
 
-    if(this.state.status && this.state.status === 'busy'){
-        this.logs.user_log_obj.if_bot_busy = true
-        return true
-    }
-
-    return false
-};
 
 bot.prototype.runSeeds = async function() {
 
     return true
 
 };
-
+// погрузить бота в ожидание
 bot.prototype.sleep = function(ms) {
 
     return new Promise((resolve) => {

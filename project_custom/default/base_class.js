@@ -48,7 +48,7 @@ function bot() {
             }
         }
     };
-
+    // установка хука ответов телеграм
     this.setTelegramHook = async function(server_url, token) {
 
         let url = 'https://api.telegram.org/bot'+ token +'/setWebhook'

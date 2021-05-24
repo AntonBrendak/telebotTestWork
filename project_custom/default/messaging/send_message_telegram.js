@@ -3,6 +3,7 @@
 var bot = require('./../base_class')
 
 //axios
+// базовые классы для работы с телеграм апи
 const axios = require('axios');
 
 bot.prototype.telegramAxiosSend = async function(url, request) {
@@ -23,7 +24,7 @@ bot.prototype.telegramAxiosSend = async function(url, request) {
 
     return res
 }
-bot.prototype.sendMatches = async function(customer_chat_id,text,buttons) {
+bot.prototype.sendMessageButtons = async function(customer_chat_id,text,buttons) {
     let url = 'https://api.telegram.org/bot' + process.env.TOKEN + '/sendMessage'
 
     let reply_markup = {
