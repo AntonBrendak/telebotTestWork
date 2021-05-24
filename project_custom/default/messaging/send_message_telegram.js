@@ -60,5 +60,28 @@ bot.prototype.sendMessage = async function(customer_chat_id,text) {
         console.log('send error');
     }
 }
+
+bot.prototype.sendPhoneRequesButton = async function(customer_chat_id,text) {
+    let url = 'https://api.telegram.org/bot' + process.env.TOKEN + '/sendMessage'
+
+    let reply_markup = {
+        "keyboard": [
+            text="Отправить номер телефона", 
+            request_contact=True
+        ]
+    }
+
+    let request = {
+        reply_markup: reply_markup,
+        chat_id: customer_chat_id,
+        text: text
+    }
+
+    try {
+        await this.telegramAxiosSend(url, request)
+    } catch (error) {
+        console.log('send error');
+    }
+}
 //Export
 module.exports = bot;
