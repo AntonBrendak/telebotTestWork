@@ -109,9 +109,9 @@ bot.prototype.parseCallBackData = function() {
     let arr = this.user_request.callback.data.split('|')
 
     let obj = {
-        node_id: 1,
+        message_id: 1,
         page: 2,
-        slide_id: 3,
+        slider: 3,
         command: 4,
         value: 5,
 

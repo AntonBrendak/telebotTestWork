@@ -18,7 +18,6 @@ bot.prototype.getDataFromMessengerHost = async function(req = null) {
     if(req.callback_query) {
         let id = req.callback_query.from.id
         let reply = req.callback_query.data;
-        let answerArray = reply.split('|')
     }
 };
 
