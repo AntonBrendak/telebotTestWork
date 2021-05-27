@@ -82,6 +82,28 @@ bot.prototype.sendMessage = async function(customer_chat_id,text) {
     }
 }
 
+bot.prototype.sendMessageRemoveKeyboard = async function(customer_chat_id,text) {
+    let url = 'https://api.telegram.org/bot' + process.env.TOKEN + '/sendMessage'
+
+   
+
+    let request = {
+        reply_markup: {
+            'ReplyKeyboardRemove': [
+                remove_keyboard=true
+            ]
+        },
+        chat_id: customer_chat_id,
+        text: text
+    }
+
+    try {
+        await this.telegramAxiosSend(url, request)
+    } catch (error) {
+        console.log('send error');
+    }
+}
+
 bot.prototype.sendPhoneRequesButton = async function(customer_chat_id,text) {
     let url = 'https://api.telegram.org/bot' + process.env.TOKEN + '/sendMessage'
 
@@ -105,7 +127,7 @@ bot.prototype.sendPhoneRequesButton = async function(customer_chat_id,text) {
     }
 }
 // message_id for updating message instead og send new 
-bot.prototype.slider(id, text, buttons, message_id) {
+bot.prototype.slider = async function(id, text, buttons, message_id){
     if(!message_id) {
         let url = 'https://api.telegram.org/bot' + process.env.TOKEN + '/sendMessage'
 

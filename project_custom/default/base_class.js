@@ -6,14 +6,11 @@ function bot() {
     this.chat_id = null
     this.chat_user_id = null
 
-    this.user_request = null   //преобразованный запрос от пользователя. Определяется до state
-
     this.state = {}             //состояние
     this.dialog = {}            //объект диалога
 
 
     this.system = {
-        iterator: 0,                //счеткик итераций бота для защиты от зацикливания
         request_body: null,         //тело входящего запроса
         send_message: {},           //буфер для отправки сообщений
         message_sent_time: null,   //время последнего отправленного сообщения. Нужно для выдержки времени между отправкой сообщений
