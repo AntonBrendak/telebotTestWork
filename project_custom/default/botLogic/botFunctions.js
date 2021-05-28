@@ -11,12 +11,18 @@ var bot = require('./base_class')
 
 require('./messaging/send_message_telegram')
 
-
+bot.prototype.updateClient = async function(){
+    fs.writeFile(process.env.USERS_FILE || 'Users', JSON.stringify(this.clients), { overwrite: true }, function (err) {
+        if (err) throw err;
+        console.log('It\'s saved!');
+    });
+}
 
 bot.prototype.addNewClient = async function(client){
     if(!this.clients[client.id]){
         this.clients[client.id] = client;
     }
+    await this.updateClient();
 }
 
 bot.prototype.allowUser = async function(userid,usercanaction){
@@ -30,21 +36,21 @@ bot.prototype.allowUser = async function(userid,usercanaction){
     }
 }
 
-bot.prototype.sendUserMenu = async function(ctx,userid){
-    let keyboard = [];
+bot.prototype.sendUserMenu = async function(userid){
+    let buttons = [];
     if(await this.allowUser(userid,'salesreport')){
-        keyboard.push(['🔍 Продажи за сегодня']);  
+        buttons.push(this.buttons.getDaySales);  
         if(expandsales){
-            keyboard.push(['Детализация продаж']); 
+            keyboard.push(this.buttons.salesDetail); 
             expandsales = false;
         }
         if(this.clients[userid].salesreportperiod){
-            keyboard.push(['⭐️ Продажи за сегодня: Отписаться']);  
+            keyboard.push(this.buttons.inSignDaySales);  
         }else{
-            keyboard.push(['⭐️ Продажи за сегодня: Подписаться']);  
+            keyboard.push(this.buttons.signDaySales);  
         }
-        keyboard.push(['⌚︎Установить время рассылки']);  
-        keyboard.push(['🔍 Курс']); 
+        keyboard.push(this.buttons.setBroadcustTime);  
+        keyboard.push(this.buttons.rate); 
     }
 
     
@@ -52,19 +58,13 @@ bot.prototype.sendUserMenu = async function(ctx,userid){
         if(!this.clients[userid].phone_number){
             await this.sendPhoneRequesButton();
         }else{
-            keyboard.push(['⭐️ Проверить права']);
+            keyboard.push(this.buttons.checkRights);
         }
        
         
     }
-    console.log('keyboard' + keyboard);
     if(keyboard.length>0){
-        await ctx.reply('Выберите действие', Markup
-            .keyboard(keyboard)
-            .resize()
-            .oneTime()
-        )
+        await this.sendMessageGenericButtons(userid,'',buttons)
     }
-
     
 }

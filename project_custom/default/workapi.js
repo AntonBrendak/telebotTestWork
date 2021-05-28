@@ -28,6 +28,7 @@ bot.prototype.updateSERPUsers = async function() {
                     }
                 }
             });
+            await this.updateClient();
         }catch(error){console.log(error);}
         //console.log(JSON.parse(data).explanation);
     });
@@ -37,7 +38,7 @@ bot.prototype.updateSERPUsers = async function() {
     });
 }
 
-bot.prototype.getSalesReport = async function(){
+bot.prototype.getSalesReport = async function(message){
     console.log('getSalesReport');
     let path = 'http://' + process.env.SERP_IP + ':' + process.env.SERP_PORT + '/WebSalesReportRn.hal';
     await http.get(path, async (resp) => {
@@ -50,7 +51,7 @@ bot.prototype.getSalesReport = async function(){
 
     // The whole response has been received. Print out the result.
     resp.on('end', async () => {
-        this.SalesReport = data
+        await this.sendMessage(message.from.id, JSON.stringify(data))
     });
 
     }).on("error", (err) => {
@@ -71,6 +72,10 @@ bot.prototype.getDaySalesReport  = async function(ctx) {
     resp.on('end', async () => {
         //console.log(JSON.parse(data).explanation);
         this.DaySalesReport = data;
+        fs.writeFile(process.env.SALES_DATA || 'Sales', JSON.stringify(this.salesData, null, 2), { overwrite: true }, function (err) {
+            if (err) throw err;
+            console.log('It\'s saved!');
+        });
     });
 
     }).on("error", (err) => {

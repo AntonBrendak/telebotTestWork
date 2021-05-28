@@ -26,9 +26,9 @@ var DbModels = require('./db/models')
 
 //Синхронизация с БД при старте
 
-sequelize.sync().then(result => {
+/* sequelize.sync().then(result => {
         //console.log(result);
-}).catch(err => console.log(err));
+}).catch(err => console.log(err)); */
 
 var app = express();
 
